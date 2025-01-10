@@ -1,0 +1,47 @@
+/*
+ * Copyright 2019 SMB GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package solutions.Infy.kafka.connect;
+
+import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.util.Properties;
+
+public class Version {
+    private static final Logger log = LoggerFactory.getLogger(Version.class);
+    private static final String VERSION_FILE = "/kafka-connect-version.properties";
+
+    @Getter
+    private static String version = "unknown";
+
+    static {
+        try (InputStream versionFileStream = Version.class.getResourceAsStream(VERSION_FILE)) {
+            if (versionFileStream != null) {
+                Properties props = new Properties();
+                props.load(versionFileStream);
+                version = props.getProperty("version", version).trim();
+            } else {
+                log.warn("Version file not found.");
+            }
+        } catch (Exception e) {
+            log.error("Error while loading version:", e);
+        }
+    }
+
+}
